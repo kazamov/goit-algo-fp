@@ -9,15 +9,13 @@ class Node:
         self.left = None
         self.right = None
         self.val = key
-        self.color = color  # Додатковий аргумент для зберігання кольору вузла
-        self.id = str(uuid.uuid4())  # Унікальний ідентифікатор для кожного вузла
+        self.color = color
+        self.id = str(uuid.uuid4())
 
 
 def add_edges(graph, node, pos, x=0, y=0, layer=1):
     if node is not None:
-        graph.add_node(
-            node.id, color=node.color, label=node.val
-        )  # Використання id та збереження значення вузла
+        graph.add_node(node.id, color=node.color, label=node.val)
         if node.left:
             graph.add_edge(node.id, node.left.id)
             l = x - 1 / 2**layer
@@ -47,9 +45,7 @@ def draw_heap(heap):
     tree = add_edges(tree, tree_root, pos)
 
     colors = [node[1]["color"] for node in tree.nodes(data=True)]
-    labels = {
-        node[0]: node[1]["label"] for node in tree.nodes(data=True)
-    }  # Використовуйте значення вузла для міток
+    labels = {node[0]: node[1]["label"] for node in tree.nodes(data=True)}
 
     plt.figure(figsize=(8, 5))
     nx.draw(

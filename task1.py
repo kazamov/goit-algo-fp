@@ -85,19 +85,15 @@ def merge_sort(head):
     if not head or not head.next:
         return head
 
-    # Find the middle of the linked list
     middle = find_middle(head)
 
-    # Split the linked list into two halves
     left = head
     right = middle.next
     middle.next = None
 
-    # Recursively sort both halves
     left = merge_sort(left)
     right = merge_sort(right)
 
-    # Merge the sorted halves
     sorted_list = merge(left, right)
 
     return sorted_list
@@ -128,7 +124,6 @@ def merge(left, right):
 
         current = current.next
 
-    # Attach the remaining nodes of both lists
     if left:
         current.next = left
     if right:
