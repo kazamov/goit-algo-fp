@@ -3,6 +3,8 @@ import uuid
 import networkx as nx
 import matplotlib.pyplot as plt
 
+PALETTE = ["#FA0505", "#FB3404", "#FC6403", "#FD9302", "#FEC301", "#FFF200"]
+
 
 class Node:
     def __init__(self, key, color="skyblue"):
@@ -29,7 +31,7 @@ def add_edges(graph, node, pos, x=0, y=0, layer=1):
     return graph
 
 
-def draw_tree(tree_root, traversal_function):
+def draw_tree(tree_root, traversal_function, title):
     tree_root = traversal_function(tree_root)
     tree = nx.DiGraph()
     pos = {tree_root.id: (0, 0)}
@@ -38,52 +40,36 @@ def draw_tree(tree_root, traversal_function):
     colors = [node[1]["color"] for node in tree.nodes(data=True)]
     labels = {node[0]: node[1]["label"] for node in tree.nodes(data=True)}
 
-    plt.figure(figsize=(8, 5))
+    plt.figure(figsize=(10, 7))
+    plt.title(title)
     nx.draw(
         tree, pos=pos, labels=labels, arrows=False, node_size=2500, node_color=colors
     )
     plt.show()
 
 
-def darken_color(hex_color, factor=0.8):
-    hex_color = hex_color.lstrip("#")
-
-    red = int(hex_color[0:2], 16)
-    green = int(hex_color[2:4], 16)
-    blue = int(hex_color[4:6], 16)
-
-    red = max(0, int(red * factor))
-    green = max(0, int(green * factor))
-    blue = max(0, int(blue * factor))
-
-    dark_hex_color = "#{:02x}{:02x}{:02x}".format(red, green, blue)
-
-    return dark_hex_color
-
-
 def bread_first_traversal(tree_root):
-    main_color = "#FF7F7F"
-    queue = [(tree_root, main_color)]
+    palette = PALETTE.copy()
+
+    queue = [(tree_root, palette.pop(0))]
 
     while queue:
         node, color = queue.pop(0)
         node.color = color
 
         if node.left:
-            main_color = darken_color(main_color)
-            queue.append((node.left, main_color))
+            queue.append((node.left, palette.pop(0)))
         if node.right:
-            main_color = darken_color(main_color)
-            queue.append((node.right, main_color))
+            queue.append((node.right, palette.pop(0)))
 
     return tree_root
 
 
-def depth_first_traversal(root, color="#90EE90"):
+def depth_first_traversal(root, palette=PALETTE.copy()):
     if root:
-        root.color = color
-        depth_first_traversal(root.left, darken_color(color))
-        depth_first_traversal(root.right, darken_color(color))
+        root.color = palette.pop(0)
+        depth_first_traversal(root.left, palette)
+        depth_first_traversal(root.right, palette)
 
     return root
 
@@ -96,7 +82,7 @@ if __name__ == "__main__":
     first_root.right = Node(1)
     first_root.right.left = Node(3)
 
-    draw_tree(first_root, bread_first_traversal)
+    draw_tree(first_root, bread_first_traversal, "Breadth First Traversal")
 
     second_root = Node(0)
     second_root.left = Node(4)
@@ -105,4 +91,4 @@ if __name__ == "__main__":
     second_root.right = Node(1)
     second_root.right.left = Node(3)
 
-    draw_tree(second_root, depth_first_traversal)
+    draw_tree(second_root, depth_first_traversal, "Depth First Traversal")
